@@ -1,0 +1,33 @@
+---
+title: "STA 531 HW3"
+author: "Daniel Truver"
+date: "2/15/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### (1) Rejection Sampling of the Posterior
+
+I doubt this is correct, but I've been staring at it for hours and can't think of anything else.
+
+$$
+\begin{aligned}
+\pi(\theta\mid y) 
+&= \frac{\pi_0(\theta)L(\theta)}{\int_{-\infty}^{\infty}\pi_0(\theta)L(\theta)d\theta}\\
+&\leq \frac{\pi_0(\theta)\max_\theta L(\theta)}{\int_{-\infty}^{\infty}\pi_0(\theta)L(\theta)d\theta} \\
+&= \frac{\pi_0(\theta)L(\theta_{MLE})}{\int_{-\infty}^{\infty}\pi_0(\theta)L(\theta)d\theta}
+\end{aligned}
+$$
+
+Then we use rejection sampling on the unnormalized posterior. 
+
+$$
+\pi(\theta\mid y) \int_{-\infty}^{\infty}\pi_0(\theta)L(\theta)d\theta \leq \pi_0(\theta)L(\theta_{MLE})
+$$
+
+That is, the unnormalized density is bounded above by $c$ times the posterior. Rejection sampling should still work since $\pi_0(\theta)$ is a bonafide probability distribution.
+
+#### (2) Normal-Cauchy Bayes Estimator
