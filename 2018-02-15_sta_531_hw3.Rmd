@@ -30,4 +30,10 @@ $$
 
 That is, the unnormalized density is bounded above by $c$ times the posterior. Rejection sampling should still work since $\pi_0(\theta)$ is a bonafide probability distribution.
 
-#### (2) Normal-Cauchy Bayes Estimator
+#### (2) Normal-Cauchy Bayes Estimator (MC Integration)
+
+01/31/2018
+
+#### (3) Normal Integration 
+
+
