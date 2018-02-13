@@ -36,6 +36,7 @@ That is, the unnormalized density is bounded above by $c$ times the posterior. R
 
 #### (3) Normal Integration 
 
+##### (a)
 Well, there aren't indicator functions mentioned anywhere in my notes, so we proceed by the naive approach of sampling from the uniform distribution, finding the value of function, and then taking the average. For this case, N(0,1), we will sample on the interval [2.5,10]. The variance of our estimate is $(10-2.5)^2/n$ since the variance of the standard normal is 1. So, if we want to be sure of our estimate to 3 digits, we need 
 $$
 var(\hat{\theta}) = \frac{7.5^2}{n} < 0.0001 \implies n > 562500
@@ -46,7 +47,28 @@ set.seed(2018)
 n = 562500
 a = 2.5; b = 10
 points = runif(n, 2.5, 10)
+V = b-a
 funPoints = dnorm(points, 0, 1)
-cat("The estimated P(Z>2.5) is", round((b-a) * mean(funPoints), 4),
+cat("The estimated P(Z>2.5) is", round(V * mean(funPoints), 4),
     "with the third digit significant.")
+```
+
+##### (b)
+
+We will be using the uniform distribution again because of convenience. This time, we'll take $a = 5.3, b= 10$. The variance of our $\hat{\theta}$ will be $(10-5.3)^2/n$. If we want 3 digits of accuracy, we again need
+$$
+var(\hat\theta) = \frac{4.7^2}{n} < 0.0001 \implies n > 220900
+$$
+As for finding the .995 cutoff of the gamma(1,1), I don't think we've talked about this. 
+
+```{r mcIntegrationGamma}
+set.seed(2018)
+n = 220900
+a = 5.3; b = 10
+alpha = 1; beta = 1
+points = runif(n, a, b)
+V = b-a
+funPoints = dgamma(points, 1,1)
+cat("We get that the estimate probability of X>5.3 is", V*mean(funPoints),
+    "which is approximately 0.005.")
 ```
