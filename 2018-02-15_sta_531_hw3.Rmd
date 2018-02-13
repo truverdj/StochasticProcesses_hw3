@@ -36,4 +36,17 @@ That is, the unnormalized density is bounded above by $c$ times the posterior. R
 
 #### (3) Normal Integration 
 
+Well, there aren't indicator functions mentioned anywhere in my notes, so we proceed by the naive approach of sampling from the uniform distribution, finding the value of function, and then taking the average. For this case, N(0,1), we will sample on the interval [2.5,10]. The variance of our estimate is $(10-2.5)^2/n$ since the variance of the standard normal is 1. So, if we want to be sure of our estimate to 3 digits, we need 
+$$
+var(\hat{\theta}) = \frac{7.5^2}{n} < 0.0001 \implies n > 562500
+$$
 
+```{r mcIntegrationNormal}
+set.seed(2018)
+n = 562500
+a = 2.5; b = 10
+points = runif(n, 2.5, 10)
+funPoints = dnorm(points, 0, 1)
+cat("The estimated P(Z>2.5) is", round((b-a) * mean(funPoints), 4),
+    "with the third digit significant.")
+```
