@@ -33,7 +33,10 @@ $$
 That is, the unnormalized density is bounded above by $$c = L(\theta_{MLE}) $$ times the posterior. Rejection sampling should still work since $\pi_0(\theta)$ is a bonafide probability distribution.
 
 #### (2) Normal-Cauchy Bayes Estimator (MC Integration)
+
 ##### (a)
+
+
 Techniques used for this question are based on "Introduction to Monte Carlo Statistical Methods with R" by Robert and Casella (2010).   
 ```{r plotIntegrands}
 x = 0
@@ -69,6 +72,7 @@ $$
 $$
 
 This would kill my laptop, so let's trust the theory.
+\newpage 
 
 #### (3) Normal Integration 
 
@@ -93,7 +97,9 @@ $$
 So, if we want 3 digits of accuracy, we want the confidence interval to be invariant in the third decimal place. We can ensure this with 
 $$
 1.96\cdot\sqrt{(0.99379)(1-0.99379)/n } < 0.0001 \implies n > 2.37\times 10^6
-$$
+$$  
+
+
 ##### (b)
 
 The probability of $X > 5.3$ shouldn't be a problem. On the other hand, finding .995 cutoff of gamma(1,1), very iffy.
