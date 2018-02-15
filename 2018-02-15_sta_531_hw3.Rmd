@@ -65,49 +65,38 @@ $$
 1.96\cdot SE < 0.0001 \implies \sqrt{3/n} < 0.0001/1.96 \implies n > 1.15 \times 10^9
 $$
 
-Throwing this back into the code and taking a brief coffee break, we obtain
-```{r 2b.nowWithMoreIterations}
-nsim = 1.15e9
-set.seed(2018)
-cauchySamples = rcauchy(nsim)
-x = 0
-I_0 = mean(cauchySamples*dnorm(cauchySamples, mean = x))/mean(dnorm(cauchySamples, mean = x))
-cat("The estimate for x =",x, "is", round(I_0,4), "and we are 95% confident about 3 decimal points.")
-```
+This would kill my laptop, so let's trust the theory.
 
 #### (3) Normal Integration 
 
 ##### (a)
-I interpret this problem as "we know the answer to this question and we want to assess how long it takes the Monte Carlo indicator functions to reach 3 digits of accuracy."
+I interpret this problem as "we know this probability and we want to assess how long it takes the Monte Carlo indicator functions to reach 3 digits of accuracy."
 ```{r 3a.doingItByIndicators}
 set.seed(2018)
 truth = 1 - pnorm(2.5, mean = 0, sd = 1)
 wegotit = FALSE
-k = 4
-while (!wegotit) {
-  nsim = 10^k
-  Z = rnorm(nsim)
-  P = mean(Z > 2.5 | Z < 2.5)/2
-  diff_P.truth = abs(P - truth)
-  if (diff_P.truth <= 1e-4){
-    wegotit = TRUE
-    threshold = 10^k
-  }
-  k = k + 1
-}
+k = 5
+nsim = 10^k
+Z = rnorm(nsim)
+P = 1 - mean(Z <= 2.5)
+cat("Out estiamte of P(Z > 2.5) is",round(P,4),".")
 ```
 
+Using known results, we know the true probability we're looking for is `r round(pnorm(2.5),5)`. This means the exact variance of our esimator is 
+$$
+(0.99379)(1-0.99379)/n .
+$$
+
+So, if we want 3 digits of accuracy, we want the confidence interval to be invariant in the third decimal place. We can ensure this with 
+$$
+1.96\cdot\sqrt{(0.99379)(1-0.99379)/n } < 0.0001 \implies n > 2.37\times 10^6
+$$
 ##### (b)
 
-We will be using the uniform distribution again because of convenience. This time, we'll take $a = 5.3, b= 10$. The variance of our $\hat{\theta}$ will be $(10-5.3)^2/n$. If we want 3 digits of accuracy, we again need
-$$
-\sqrt{var(\hat\theta)} = \sqrt{\frac{4.7^2}{n}} < 0.0001 \implies n > 2.209 \times 10^9
-$$
-As for finding the .995 cutoff of the gamma(1,1), eh...
+The probability of $X > 5.3$ shouldn't be a problem. On the other hand, finding the .995 cutoff of the gamma(1,1), very iffy.
 
 ```{r mcIntegrationGamma}
 set.seed(2018)
-n = 2.209e9
 a = 5.3; b = 10
 alpha = 1; beta = 1
 points = runif(n, a, b)
