@@ -2,6 +2,8 @@
 title: "STA 531 HW3"
 author: "Daniel Truver"
 date: "2/15/2018"
+header-includes:
+  - \usepackage{soul}
 output: pdf_document
 ---
 
@@ -49,7 +51,8 @@ set.seed(2018)
 cauchySamples = rcauchy(nsim)
 x = 0
 I_0 = mean(cauchySamples*dnorm(cauchySamples, mean = x))/mean(dnorm(cauchySamples, mean = x))
-cat("The estimate for x =",x, "is", round(I_0,4))
+cat("The estimate for x =",x, "is", round(I_0,4),
+    "\n")
 x = 1
 I_1 = mean(cauchySamples*dnorm(cauchySamples, mean = x))/mean(dnorm(cauchySamples, mean = x))
 cat("The estimate for x =",x, "is", round(I_1,4))
@@ -93,19 +96,60 @@ $$
 $$
 ##### (b)
 
-The probability of $X > 5.3$ shouldn't be a problem. On the other hand, finding the .995 cutoff of the gamma(1,1), very iffy.
+The probability of $X > 5.3$ shouldn't be a problem. On the other hand, finding .995 cutoff of gamma(1,1), very iffy.
 
-```{r mcIntegrationGamma}
+```{r}
 set.seed(2018)
-a = 5.3; b = 10
-alpha = 1; beta = 1
-points = runif(n, a, b)
-V = b-a
-funPoints = dgamma(points, 1,1)
-cat("We get that the estimate probability of X>5.3 is", V*mean(funPoints),
-    "which is approximately 0.005.")
+nsim = 1e6
+X = rgamma(nsim, 1, 1)
+P = mean(X > 5.3)
+cat("Our estimated P(X>5.3) =", P, ".")
 ```
 
-#### (4) Optimal Instrumental Distribution
+#### (4) In Class We Discussed the Optimal Instrumental Distribution
 
-Yeah, no. I haven't a clue. 
+##### (a)
+Let me just check the \st{Casella Book} class notes real quick.
+
+We know that the optimal choice is 
+$$
+g^*(x) = \frac{|h(x)|f(x)}{\int_X |h(z)|f(z)~dz }
+$$
+
+If we insert this into our estimator, with $x_j \sim g$, 
+$$
+\frac{\sum_{j=1}^m h(x_j) f(x_j)/g(x_j)}{\sum_{j=1}^m f(x_j)/g(x_j)},
+$$
+
+then we get: 
+$$
+\begin{aligned}
+\frac{\sum_{j=1}^m h(x_j) f(x_j)/g^*(x_j)}{\sum_{j=1}^m f(x_j)/g^*(x_j)} 
+&= \frac{\sum_{j=1}^m h(x_j) f(x_j)/|h(x_j)|f(x_j)}{\sum_{j=1}^m f(x_j)/|h(x_j)|f(x_j)} \\
+&= \frac{\sum_{j=1}^m h(x_j)|h(x_j)|^{-1}}{\sum_{j=1}^m |h(x_j)|^{-1}}
+\end{aligned}
+$$
+
+Just as planned. 
+
+##### (b) 
+
+```{r 4b.simulation}
+set.seed(2018)
+nsim = 1e5
+truth = pnorm(2) - pnorm(1)
+Z = rnorm(nsim)
+P.carlo = mean(1 < Z & Z < 2)
+h = function(x){return(1 * (1 < x & x < 2))}
+g.star = function(x){return(h(x) * dnorm(x,0,1)/truth)}
+imp_summands = h(Z) * dnorm(Z) / g.star(Z)
+P.opt = sum( imp_summands[!is.nan(imp_summands)] ) / sum(!is.nan(imp_summands))
+```
+
+```{r, echo=FALSE}
+cat("The error of the standard MC estimator is", abs(P.carlo - truth), ".\n")
+cat("The error of the Importance Sampler with the optimal choice of distribution is", 
+    abs(P.opt - truth), ".\n")
+```
+
+This is expected, because, as stated in the text, the optimal distribution is really just a formality since it requires knowledge of the truth. 
